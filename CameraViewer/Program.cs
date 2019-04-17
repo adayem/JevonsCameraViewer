@@ -25,12 +25,12 @@ namespace CameraViewer {
             public class CameraSettings {
                 public string SaveLocation = "";
                 public string CamMoniker = "Hello World";
-                public bool CamRotate = false;
-                public int CamRotateValue = 0;
+                public int ResolutionValue = 0;
+                public int CamRotateValue = 1;
                 public bool CamMirror = false;
                 public bool DrawGrid = false;
                 public int GridSpacing = 20;
-                public int CamIndex = 1;
+                public int CamIndex = 0;
                 public bool grayScale = false;
                 public bool R = false;
                 public bool G = false;
@@ -48,8 +48,7 @@ namespace CameraViewer {
                 public int ContrastVal = 1;
             }
 
-            public CameraSettings Cam1 = new CameraSettings();
-            public CameraSettings Cam2 = new CameraSettings();
+            public List<CameraSettings> Cam = new List<CameraSettings> { new CameraSettings(), new CameraSettings() };
         }
     }
 

@@ -10,11 +10,12 @@ using System.Windows.Forms;
 using Microsoft.WindowsAPICodePack.Dialogs;
 using DirectShowLib;
 using System.Threading;
+using AForge.Video.DirectShow;
 
 namespace CameraViewer {
     public partial class CameraAdjustments : UserControl {
         public Camera camera;
-        bool xCamera = false;
+        int camId = 0;
 
         bool isLoaded = false;
         public CameraAdjustments() {
@@ -22,51 +23,30 @@ namespace CameraViewer {
             isLoaded = true;
         }
 
-        public void InitializeVariables(Camera thisCamera, bool xcamera) {
+        public void InitializeVariables(Camera thisCamera, int id) {
             camera = thisCamera;
-            xCamera = xcamera;
+            camId = id;
 
             GetCamList();
 
-            if (xCamera) {
-                cbRotate.Checked = Program.Settings.Cam1.CamRotate;
-                cbMirror1.Checked = Program.Settings.Cam1.CamMirror;
-                cbDrawGrid1.Checked = Program.Settings.Cam1.DrawGrid;
-                cbGrayscale.Checked = Program.Settings.Cam1.grayScale;
-                cbInvert.Checked = Program.Settings.Cam1.Invert;
-                cbEdgeDetect.Checked = Program.Settings.Cam1.EdgeDetect;
-                cbNoiseReduction.Checked = Program.Settings.Cam1.NoiseReduction;
-                cbThreashold.Checked = Program.Settings.Cam1.Threshold;
-                cbContrast.Checked = Program.Settings.Cam1.Contrast;
-                cbZoom.Checked = Program.Settings.Cam1.Zoom;
+            cbMirror1.Checked = Program.Settings.Cam[camId].CamMirror;
+            cbDrawGrid1.Checked = Program.Settings.Cam[camId].DrawGrid;
+            cbGrayscale.Checked = Program.Settings.Cam[camId].grayScale;
+            cbInvert.Checked = Program.Settings.Cam[camId].Invert;
+            cbEdgeDetect.Checked = Program.Settings.Cam[camId].EdgeDetect;
+            cbNoiseReduction.Checked = Program.Settings.Cam[camId].NoiseReduction;
+            cbThreshold.Checked = Program.Settings.Cam[camId].Threshold;
+            cbContrast.Checked = Program.Settings.Cam[camId].Contrast;
+            cbZoom.Checked = Program.Settings.Cam[camId].Zoom;
 
-                nGridInterval.Value = Program.Settings.Cam1.GridSpacing < 2 ? 2 : Program.Settings.Cam1.GridSpacing;
-                cbEdgeDetection.SelectedIndex = Program.Settings.Cam1.EdgeDetectVal;
-                cbNoiseReduce.SelectedIndex = Program.Settings.Cam1.NoiseReductionVal;
-                nThreashold.Value = Program.Settings.Cam1.ThresholdVal;
-                nZoom.Value = Program.Settings.Cam1.ZoomVal;
-                lblSaveFileLocation.Text = string.IsNullOrWhiteSpace(Program.Settings.Cam1.SaveLocation) ? "Save Location..." : Program.Settings.Cam1.SaveLocation.Substring(Program.Settings.Cam1.SaveLocation.Length < 50 ? 0 : Program.Settings.Cam1.SaveLocation.Length - 50);
-            }
-            else {
-                cbRotate.Checked = Program.Settings.Cam2.CamRotate;
-                cbMirror1.Checked = Program.Settings.Cam2.CamMirror;
-                cbDrawGrid1.Checked = Program.Settings.Cam2.DrawGrid;
-                cbGrayscale.Checked = Program.Settings.Cam2.grayScale;
-                cbInvert.Checked = Program.Settings.Cam2.Invert;
-                cbEdgeDetect.Checked = Program.Settings.Cam2.EdgeDetect;
-                cbNoiseReduction.Checked = Program.Settings.Cam2.NoiseReduction;
-                cbThreashold.Checked = Program.Settings.Cam2.Threshold;
-                cbContrast.Checked = Program.Settings.Cam2.Contrast;
-                cbZoom.Checked = Program.Settings.Cam2.Zoom;
-
-                nGridInterval.Value = Program.Settings.Cam2.GridSpacing < 2 ? 2 : Program.Settings.Cam2.GridSpacing;
-                cbEdgeDetection.SelectedIndex = Program.Settings.Cam2.EdgeDetectVal;
-                cbNoiseReduce.SelectedIndex = Program.Settings.Cam2.NoiseReductionVal;
-                nThreashold.Value = Program.Settings.Cam2.ThresholdVal;
-                nZoom.Value = Program.Settings.Cam2.ZoomVal;
-
-                lblSaveFileLocation.Text = string.IsNullOrWhiteSpace(Program.Settings.Cam2.SaveLocation) ? "Save Location..." : Program.Settings.Cam1.SaveLocation.Substring(Program.Settings.Cam2.SaveLocation.Length < 50 ? 0 : Program.Settings.Cam2.SaveLocation.Length - 50);
-            }
+            nGridInterval.Value = Program.Settings.Cam[camId].GridSpacing < 2 ? 2 : Program.Settings.Cam[camId].GridSpacing;
+            cbEdgeDetection.SelectedIndex = Program.Settings.Cam[camId].EdgeDetectVal;
+            cbRotationAmount.SelectedIndex = Program.Settings.Cam[camId].CamRotateValue;
+            cbResolution.SelectedIndex = Program.Settings.Cam[camId].ResolutionValue;
+            cbNoiseReduce.SelectedIndex = Program.Settings.Cam[camId].NoiseReductionVal;
+            nThreshold.Value = Program.Settings.Cam[camId].ThresholdVal;
+            nZoom.Value = Program.Settings.Cam[camId].ZoomVal;
+            lblSaveFileLocation.Text = string.IsNullOrWhiteSpace(Program.Settings.Cam[camId].SaveLocation) ? "Save Location..." : Program.Settings.Cam[camId].SaveLocation.Substring(Program.Settings.Cam[camId].SaveLocation.Length < 50 ? 0 : Program.Settings.Cam[camId].SaveLocation.Length - 50);
         }
 
         internal void UpdateEyeTracking() {
@@ -85,232 +65,156 @@ namespace CameraViewer {
         private void GetCamList() {
             List<string> Devices = camera.GetDeviceList();
             XCam_comboBox.Items.Clear();
-            if (Devices.Count != 0) {
-                for (int i = 0; i < Devices.Count; i++) {
+            if (Devices.Count != 0)
+            {
+                for (int i = 0; i < Devices.Count; i++)
+                {
                     XCam_comboBox.Items.Add(i.ToString() + ": " + Devices[i]);
                 }
             }
-            else {
+            else
+            {
                 XCam_comboBox.Items.Add("----");
                 XCamStatus_label.Text = "No Cam";
             }
-            if (xCamera) {
-                if ((Devices.Count > Program.Settings.Cam1.CamIndex) && (Program.Settings.Cam1.CamIndex > 0)) {
-                    XCam_comboBox.SelectedIndex = Program.Settings.Cam1.CamIndex;
-                }
-                else {
-                    XCam_comboBox.SelectedIndex = 0;  
-                }
+
+            if ((Devices.Count > Program.Settings.Cam[camId].CamIndex) && (Program.Settings.Cam[camId].CamIndex > 0)) {
+                XCam_comboBox.SelectedIndex = Program.Settings.Cam[camId].CamIndex;
             }
             else {
-                if ((Devices.Count > Program.Settings.Cam2.CamIndex) && (Program.Settings.Cam2.CamIndex > 0)) {
-                    XCam_comboBox.SelectedIndex = Program.Settings.Cam2.CamIndex;
-                }
-                else {
-                    XCam_comboBox.SelectedIndex = 0;  
-                }
+                XCam_comboBox.SelectedIndex = 0;  
             }
         }
 
         private void xCamSelect_Click(object sender, EventArgs e) {
-            Program.Settings.Cam1.CamIndex = XCam_comboBox.SelectedIndex;
+            Program.Settings.Cam[camId].CamIndex = XCam_comboBox.SelectedIndex;
 
-            while (camera.Active) {
+            if (camera.Active) {
                 camera.SignalToStop();
                 Thread.Sleep(50);
                 camera.Active = false;
+
+                xCamSelect.Text = "Go";
             }
-
-
-            List<string> Monikers = camera.GetMonikerStrings();
-            if (xCamera) {
-                Program.Settings.Cam1.CamMoniker = Monikers[XCam_comboBox.SelectedIndex];
-                AppSettings<Program.MySettings>.Save(Program.Settings);
-            }
-            else {
-                Program.Settings.Cam2.CamMoniker = Monikers[XCam_comboBox.SelectedIndex];
-                AppSettings<Program.MySettings>.Save(Program.Settings);
-            }
-
-            camera.MonikerString = Monikers[XCam_comboBox.SelectedIndex];
-
-            camera.Active = true;
-
-            camera.Start("DownCamera", Monikers[XCam_comboBox.SelectedIndex]);
-
-            if (!camera.ReceivingFrames) {
-                MessageBox.Show("Camera being used by another process");
-            }
-        }
-
-        private void cbRotate_CheckedChanged(object sender, EventArgs e) {
-            try { camera.rotateCam = cbRotate.Checked; } catch { }
-            // yes i am lazy
-            if (xCamera)
-                Program.Settings.Cam1.CamRotate = cbRotate.Checked;
             else
-                Program.Settings.Cam2.CamRotate = cbRotate.Checked;
-            AppSettings<Program.MySettings>.Save(Program.Settings);
+            {
+                List<string> Monikers = camera.GetMonikerStrings();
+
+                Program.Settings.Cam[camId].CamMoniker = Monikers[XCam_comboBox.SelectedIndex];
+                AppSettings<Program.MySettings>.Save(Program.Settings);
+
+                camera.MonikerString = Monikers[XCam_comboBox.SelectedIndex];
+
+                camera.Start("DownCamera", Monikers[XCam_comboBox.SelectedIndex], camId);
+
+                if (!camera.ReceivingFrames)
+                {
+                    MessageBox.Show("Camera being used by another process");
+                }
+                else
+                {
+                    xCamSelect.Text = "Stop";
+                    camera.Active = true;
+                }
+            }
         }
 
         private void cbRotationAmount_SelectedIndexChanged(object sender, EventArgs e) {
-            try { camera.rotateAmount = cbRotationAmount.SelectedIndex; } catch { }
-            // yes i am lazy
-            if (xCamera)
-                Program.Settings.Cam1.CamRotate = cbRotate.Checked;
-            else
-                Program.Settings.Cam2.CamRotate = cbRotate.Checked;
+            try {camera.rotateAmount = cbRotationAmount.SelectedIndex; } catch { }
+
+            Program.Settings.Cam[camId].CamRotateValue = cbRotationAmount.SelectedIndex;
+            AppSettings<Program.MySettings>.Save(Program.Settings);
+        }
+
+        private void cbResolution_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            Program.Settings.Cam[camId].ResolutionValue = cbResolution.SelectedIndex;
             AppSettings<Program.MySettings>.Save(Program.Settings);
         }
 
         private void cbMirror1_CheckedChanged(object sender, EventArgs e) {
             try { camera.Mirror = cbMirror1.Checked; } catch { }
-            if (xCamera)
-                Program.Settings.Cam1.CamMirror = cbMirror1.Checked;
-            else
-                Program.Settings.Cam2.CamMirror = cbMirror1.Checked;
+            Program.Settings.Cam[camId].CamMirror = cbMirror1.Checked;
             AppSettings<Program.MySettings>.Save(Program.Settings);
         }
 
         private void cbDrawGrid1_CheckedChanged(object sender, EventArgs e) {
             try { camera.DrawGrid = cbDrawGrid1.Checked; } catch { }
-            if (xCamera)
-                Program.Settings.Cam1.DrawGrid = cbDrawGrid1.Checked;
-            else
-                Program.Settings.Cam2.DrawGrid = cbDrawGrid1.Checked;
+            Program.Settings.Cam[camId].DrawGrid = cbDrawGrid1.Checked;
             AppSettings<Program.MySettings>.Save(Program.Settings);
         }
 
         private void cbGrayscale_CheckedChanged(object sender, EventArgs e) {
-            try {
-                camera.GrayScale = cbGrayscale.Checked;
-            }
-            catch { }
-            if (xCamera)
-                Program.Settings.Cam1.grayScale = cbGrayscale.Checked;
-            else
-                Program.Settings.Cam2.grayScale = cbGrayscale.Checked;
+            try { camera.GrayScale = cbGrayscale.Checked; } catch { }
+            Program.Settings.Cam[camId].grayScale = cbGrayscale.Checked;
             AppSettings<Program.MySettings>.Save(Program.Settings);
         }
 
         private void cbInvert_CheckedChanged(object sender, EventArgs e) {
-            try {
-                camera.Invert = cbInvert.Checked;
-            }
-            catch { }
-            if (xCamera)
-                Program.Settings.Cam1.Invert = cbInvert.Checked;
-            else
-                Program.Settings.Cam2.Invert = cbInvert.Checked;
+            try { camera.Invert = cbInvert.Checked; } catch { }
+            Program.Settings.Cam[camId].Invert = cbInvert.Checked;
             AppSettings<Program.MySettings>.Save(Program.Settings);
         }
 
         private void cbEdgeDetect_CheckedChanged(object sender, EventArgs e) {
-            try {
-                camera.EdgeDetect = cbEdgeDetect.Checked;
-            }
-            catch { }
-            if (xCamera)
-                Program.Settings.Cam1.EdgeDetect = cbEdgeDetect.Checked;
-            else
-                Program.Settings.Cam2.EdgeDetect = cbEdgeDetect.Checked;
+            try { camera.EdgeDetect = cbEdgeDetect.Checked; } catch { }
+
+            Program.Settings.Cam[camId].EdgeDetect = cbEdgeDetect.Checked;
             AppSettings<Program.MySettings>.Save(Program.Settings);
         }
 
         private void cbNoiseReduction_CheckedChanged(object sender, EventArgs e) {
-            try {
-                camera.NoiseReduce = cbNoiseReduction.Checked;
-            }
-            catch { }
-            if (xCamera)
-                Program.Settings.Cam1.NoiseReduction = cbNoiseReduction.Checked;
-            else
-                Program.Settings.Cam2.NoiseReduction = cbNoiseReduction.Checked;
+            try { camera.NoiseReduce = cbNoiseReduction.Checked; } catch { }
+            Program.Settings.Cam[camId].NoiseReduction = cbNoiseReduction.Checked;
             AppSettings<Program.MySettings>.Save(Program.Settings);
         }
 
-        private void cbThreashold_CheckedChanged(object sender, EventArgs e) {
-            try {
-                camera.Threshold = cbThreashold.Checked;
-            }
-            catch { }
-            if (xCamera)
-                Program.Settings.Cam1.Threshold = cbThreashold.Checked;
-            else
-                Program.Settings.Cam2.Threshold = cbThreashold.Checked;
+        private void cbThreshold_CheckedChanged(object sender, EventArgs e) {
+            try { camera.Threshold = cbThreshold.Checked; } catch { }
+            Program.Settings.Cam[camId].Threshold = cbThreshold.Checked;
             AppSettings<Program.MySettings>.Save(Program.Settings);
         }
 
         private void cbContrast_CheckedChanged(object sender, EventArgs e) {
-            try {
-                camera.Contrast = cbContrast.Checked;
-            }
-            catch { }
-            if (xCamera)
-                Program.Settings.Cam1.Contrast = cbContrast.Checked;
-            else
-                Program.Settings.Cam2.Contrast = cbContrast.Checked;
+            try { camera.Contrast = cbContrast.Checked; } catch { }
+            Program.Settings.Cam[camId].Contrast = cbContrast.Checked;
             AppSettings<Program.MySettings>.Save(Program.Settings);
         }
 
         private void cbZoom_CheckedChanged(object sender, EventArgs e) {
-            try {
-                camera.Zoom = cbZoom.Checked;
-            }
-            catch { }
-            if (xCamera)
-                Program.Settings.Cam1.Zoom = cbZoom.Checked;
-            else
-                Program.Settings.Cam2.Zoom = cbZoom.Checked;
+            try { camera.Zoom = cbZoom.Checked; } catch { }
+            Program.Settings.Cam[camId].Zoom = cbZoom.Checked;
             AppSettings<Program.MySettings>.Save(Program.Settings);
         }
 
         // values
         private void nGridInterval_ValueChanged(object sender, EventArgs e) {
-            try {
-                camera.GridIncrement = (int)nGridInterval.Value;
-            }
-            catch { }
-            if (xCamera)
-                Program.Settings.Cam1.GridSpacing = camera.GridIncrement;
-            else
-                Program.Settings.Cam2.GridSpacing = camera.GridIncrement;
+            try { camera.GridIncrement = (int)nGridInterval.Value; } catch { }
+            Program.Settings.Cam[camId].GridSpacing = camera.GridIncrement;
             AppSettings<Program.MySettings>.Save(Program.Settings);
         }
 
         private void cbEdgeDetection_SelectedIndexChanged(object sender, EventArgs e) {
             try { camera.EdgeDetectValue = (int)cbEdgeDetection.SelectedIndex; } catch { }
-            if (xCamera)
-                Program.Settings.Cam1.EdgeDetectVal = camera.EdgeDetectValue;
-            else
-                Program.Settings.Cam2.EdgeDetectVal = camera.EdgeDetectValue;
+            Program.Settings.Cam[camId].EdgeDetectVal = camera.EdgeDetectValue;
             AppSettings<Program.MySettings>.Save(Program.Settings);
         }
 
         private void cbNoiseReduce_SelectedIndexChanged(object sender, EventArgs e) {
             try { camera.NoiseReduceValue = (int)cbNoiseReduce.SelectedIndex; } catch { }
-            if (xCamera)
-                Program.Settings.Cam1.NoiseReductionVal = camera.NoiseReduceValue;
-            else
-                Program.Settings.Cam2.NoiseReductionVal = camera.NoiseReduceValue;
+            Program.Settings.Cam[camId].NoiseReductionVal = camera.NoiseReduceValue;
             AppSettings<Program.MySettings>.Save(Program.Settings);
         }
 
-        private void nThreashold_ValueChanged(object sender, EventArgs e) {
-            try { camera.ThresholdValue = (int)nThreashold.Value; } catch { }
-            if (xCamera)
-                Program.Settings.Cam1.ThresholdVal = camera.ThresholdValue;
-            else
-                Program.Settings.Cam2.ThresholdVal = camera.ThresholdValue;
+        private void nThreshold_ValueChanged(object sender, EventArgs e) {
+            try { camera.ThresholdValue = (int)nThreshold.Value; } catch { }
+            Program.Settings.Cam[camId].ThresholdVal = camera.ThresholdValue;
             AppSettings<Program.MySettings>.Save(Program.Settings);
         }
 
         private void nZoom_ValueChanged(object sender, EventArgs e) {
             try { camera.ZoomValue = (int)nZoom.Value; } catch { }
-            if (xCamera)
-                Program.Settings.Cam1.GridSpacing = camera.ZoomValue;
-            else
-                Program.Settings.Cam2.GridSpacing = camera.ZoomValue;
+            Program.Settings.Cam[camId].GridSpacing = camera.ZoomValue;
             AppSettings<Program.MySettings>.Save(Program.Settings);
         }
 
@@ -323,15 +227,8 @@ namespace CameraViewer {
             directoryDialog.ShowDialog();
             try {
                 if (!string.IsNullOrWhiteSpace(directoryDialog.FileName)) {
-                    if (xCamera) {
-                        Program.Settings.Cam1.SaveLocation = directoryDialog.FileName;
-                        lblSaveFileLocation.Text = string.IsNullOrWhiteSpace(Program.Settings.Cam1.SaveLocation) ? "Save Location..." : Program.Settings.Cam1.SaveLocation.Substring(Program.Settings.Cam1.SaveLocation.Length < 50 ? 0 : Program.Settings.Cam1.SaveLocation.Length - 50);
-                    }
-                    else {
-                        Program.Settings.Cam2.SaveLocation = directoryDialog.FileName;
-                        lblSaveFileLocation.Text = string.IsNullOrWhiteSpace(Program.Settings.Cam2.SaveLocation) ? "Save Location..." : Program.Settings.Cam1.SaveLocation.Substring(Program.Settings.Cam2.SaveLocation.Length < 50 ? 0 : Program.Settings.Cam2.SaveLocation.Length - 50);
-                    }
-
+                    Program.Settings.Cam[camId].SaveLocation = directoryDialog.FileName;
+                    lblSaveFileLocation.Text = string.IsNullOrWhiteSpace(Program.Settings.Cam[camId].SaveLocation) ? "Save Location..." : Program.Settings.Cam[camId].SaveLocation.Substring(Program.Settings.Cam[camId].SaveLocation.Length < 50 ? 0 : Program.Settings.Cam[camId].SaveLocation.Length - 50);
                     AppSettings<Program.MySettings>.Save(Program.Settings);
                 }
             }
@@ -392,8 +289,8 @@ namespace CameraViewer {
             camera.ShapeVariables.lineCannyThreshold = (double)nlineCanny.Value;
         }
 
-        private void nLineThreashold_ValueChanged(object sender, EventArgs e) {
-            camera.ShapeVariables.lineThreshold = (int)nLineThreashold.Value;
+        private void nLineThreshold_ValueChanged(object sender, EventArgs e) {
+            camera.ShapeVariables.lineThreshold = (int)nLineThreshold.Value;
         }
 
         private void nThresholdLinking_ValueChanged(object sender, EventArgs e) {
@@ -458,51 +355,50 @@ namespace CameraViewer {
         }
 
         private void cbR_CheckedChanged(object sender, EventArgs e) {
-            try {
-                camera.R = cbR.Checked;
-            }
-            catch { }
-            if (xCamera)
-                Program.Settings.Cam1.R = cbR.Checked;
-            else
-                Program.Settings.Cam2.R = cbR.Checked;
+            try { camera.R = cbR.Checked; } catch { }
+
+            Program.Settings.Cam[camId].R = cbR.Checked;
             AppSettings<Program.MySettings>.Save(Program.Settings);
         }
 
         private void cbG_CheckedChanged(object sender, EventArgs e) {
-            try {
-                camera.G = cbG.Checked;
-            }
-            catch { }
-            if (xCamera)
-                Program.Settings.Cam1.G = cbG.Checked;
-            else
-                Program.Settings.Cam2.G = cbG.Checked;
+            try { camera.G = cbG.Checked; } catch { }
+            Program.Settings.Cam[camId].G = cbG.Checked;
             AppSettings<Program.MySettings>.Save(Program.Settings);
         }
 
         private void cbB_CheckedChanged(object sender, EventArgs e) {
-            try {
-                camera.B = cbB.Checked;
-            }
-            catch { }
-            if (xCamera)
-                Program.Settings.Cam1.B = cbB.Checked;
-            else
-                Program.Settings.Cam2.B = cbB.Checked;
+            try { camera.B = cbB.Checked; } catch { }
+            Program.Settings.Cam[camId].B = cbB.Checked;
             AppSettings<Program.MySettings>.Save(Program.Settings);
         }
 
-        private void XCam_comboBox_SelectedIndexChanged(object sender, EventArgs e) {
-            if (xCamera) {
-                Program.Settings.Cam1.CamIndex = XCam_comboBox.SelectedIndex;
-                AppSettings<Program.MySettings>.Save(Program.Settings);
-            }
-            else {
-                Program.Settings.Cam2.CamIndex = XCam_comboBox.SelectedIndex;
-                AppSettings<Program.MySettings>.Save(Program.Settings);
+        private void UpdateResolutionsCombobox()
+        {
+            // Set available resolutions
+            cbResolution.Items.Clear();
+
+            List<string> Monikers = camera.GetMonikerStrings();
+            var Moniker = Monikers[XCam_comboBox.SelectedIndex];
+            var VideoSource = new VideoCaptureDevice(Moniker);
+
+            foreach (var cap in VideoSource.VideoCapabilities)
+            {
+                cbResolution.Items.Add(cap.FrameSize.Width.ToString() + " x " + cap.FrameSize.Height.ToString());
             }
 
+            try
+            {
+                cbResolution.SelectedIndex = Program.Settings.Cam[camId].ResolutionValue;
+            }
+            catch { }
+        }
+
+        private void XCam_comboBox_SelectedIndexChanged(object sender, EventArgs e) {
+            Program.Settings.Cam[camId].CamIndex = XCam_comboBox.SelectedIndex;
+            AppSettings<Program.MySettings>.Save(Program.Settings);
+
+            UpdateResolutionsCombobox();
         }
 
         private void tbEyeRectX_KeyPress(object sender, KeyPressEventArgs e) {

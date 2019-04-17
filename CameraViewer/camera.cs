@@ -34,9 +34,8 @@ namespace CameraViewer {
 
         public bool isFullScreenMode = false;
         public Size fullscreenSize = new Size(1920, 1080);
-
-        public bool rotateCam = false;
-        public int rotateAmount = 1;
+        
+        public int rotateAmount = 0;
 
         public ShapeDetectionVariables ShapeVariables = new ShapeDetectionVariables();
         public OpticalFlowVariable optiVariables = new OpticalFlowVariable();
@@ -119,14 +118,15 @@ namespace CameraViewer {
         public bool ReceivingFrames { get; set; }
 
         public IAMVideoProcAmp cameraControls;
-        public bool Start(string cam, string MonikerStr) {
+        public bool Start(string cam, string MonikerStr, int camId) {
             try {
                 // enumerate video devices
                 FilterInfoCollection videoDevices = new FilterInfoCollection(AForge.Video.DirectShow.FilterCategory.VideoInputDevice);
                 // create the video source (check that the camera exists is already done
                 VideoSource = new VideoCaptureDevice(MonikerStr);
 
-                VideoSource.VideoResolution = VideoSource.VideoCapabilities[17];
+                int resId = Program.Settings.Cam[camId].ResolutionValue;
+                VideoSource.VideoResolution = VideoSource.VideoCapabilities[resId];
                 VideoSource.NewFrame += new NewFrameEventHandler(Video_NewFrame);
                 ReceivingFrames = false;
 
@@ -156,7 +156,7 @@ namespace CameraViewer {
                     return false;
                 }
 
-                VideoCapabilities Capability = VideoSource.VideoCapabilities[17];
+                VideoCapabilities Capability = VideoSource.VideoCapabilities[resId];
 
                 ImgSizeX = Capability.FrameSize.Width;
                 ImgSizeY = Capability.FrameSize.Height;
@@ -304,21 +304,22 @@ namespace CameraViewer {
             if (Zoom)
                 ZoomImg(ref frame, ZoomValue);
 
-            if (this.rotateCam) {
-                switch (rotateAmount) {
-                    case 0:
-                        frame.RotateFlip(RotateFlipType.Rotate90FlipNone);
-                        break;
-                    case 1:
-                        frame.RotateFlip(RotateFlipType.Rotate180FlipNone);
-                        break;
-                    case 2:
-                        frame.RotateFlip(RotateFlipType.Rotate270FlipNone);
-                        break;
-                    default:
-                        frame.RotateFlip(RotateFlipType.Rotate180FlipNone);
-                        break;
-                }
+            switch (rotateAmount) {
+                case 0:
+                    // No rotation
+                    break;
+                case 1:
+                    frame.RotateFlip(RotateFlipType.Rotate90FlipNone);
+                    break;
+                case 2:
+                    frame.RotateFlip(RotateFlipType.Rotate180FlipNone);
+                    break;
+                case 3:
+                    frame.RotateFlip(RotateFlipType.Rotate270FlipNone);
+                    break;
+                default:
+                    frame.RotateFlip(RotateFlipType.Rotate180FlipNone);
+                    break;
             }
 
             if (eyeTracker.isActive) {
@@ -502,7 +503,7 @@ namespace CameraViewer {
         }
 
         private void ZoomImg(ref Bitmap frame, double Factor) {
-            if (rotateCam && (rotateAmount == 0 || rotateAmount == 2)) {
+            if (rotateAmount == 1 || rotateAmount == 3) {
                 int x = (int)(1280 * 1.7);
                 int y = (int)(720 * 1.7);
                 frame = ResizeImage(frame, new Size(x, y));

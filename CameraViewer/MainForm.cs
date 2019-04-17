@@ -121,8 +121,8 @@ namespace CameraViewer {
             Camera1.ImageBox = protectedPictureBox0;
             Camera2.ImageBox = protectedPictureBox1;
 
-            cameraAdjustments1.InitializeVariables(Camera1, true);
-            cameraAdjustments2.InitializeVariables(Camera2, false);
+            cameraAdjustments1.InitializeVariables(Camera1, 0);
+            cameraAdjustments2.InitializeVariables(Camera2, 1);
         }        
 
         private void MainForm_FormClosing(object sender, FormClosingEventArgs e) {
@@ -131,8 +131,8 @@ namespace CameraViewer {
 
         private void protectedPictureBox0_Click(object sender, EventArgs e) {
             try {
-                if (protectedPictureBox0.Image != null && !string.IsNullOrWhiteSpace(Program.Settings.Cam1.SaveLocation)) {
-                    protectedPictureBox0.Image.Save($"{Program.Settings.Cam1.SaveLocation}\\{DateTime.Now.ToString().Replace(" ", String.Empty).Replace(":", String.Empty)}.bmp");                    
+                if (protectedPictureBox0.Image != null && !string.IsNullOrWhiteSpace(Program.Settings.Cam[0].SaveLocation)) {
+                    protectedPictureBox0.Image.Save($"{Program.Settings.Cam[0].SaveLocation}\\{DateTime.Now.ToString().Replace(" ", String.Empty).Replace(":", String.Empty)}.bmp");                    
                 }
             }
             catch (Exception) {
@@ -143,8 +143,8 @@ namespace CameraViewer {
 
         private void protectedPictureBox1_Click(object sender, EventArgs e) {
             try {
-                if (protectedPictureBox1.Image != null && !string.IsNullOrWhiteSpace(Program.Settings.Cam2.SaveLocation)) {
-                    protectedPictureBox1.Image.Save($"{Program.Settings.Cam2.SaveLocation}\\{DateTime.Now.ToString().Replace(" ", String.Empty).Replace(":", String.Empty)}.bmp");
+                if (protectedPictureBox1.Image != null && !string.IsNullOrWhiteSpace(Program.Settings.Cam[1].SaveLocation)) {
+                    protectedPictureBox1.Image.Save($"{Program.Settings.Cam[1].SaveLocation}\\{DateTime.Now.ToString().Replace(" ", String.Empty).Replace(":", String.Empty)}.bmp");
                 }
             }
             catch (Exception) {

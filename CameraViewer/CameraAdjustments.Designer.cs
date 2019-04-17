@@ -32,7 +32,9 @@
             this.lblSaveFileLocation = new System.Windows.Forms.Label();
             this.bSetSaveLocation = new System.Windows.Forms.Button();
             this.lblRotate = new System.Windows.Forms.Label();
+            this.lblResolution = new System.Windows.Forms.Label();
             this.cbRotationAmount = new System.Windows.Forms.ComboBox();
+            this.cbResolution = new System.Windows.Forms.ComboBox();
             this.cbNoiseReduce = new System.Windows.Forms.ComboBox();
             this.cbEdgeDetection = new System.Windows.Forms.ComboBox();
             this.label8 = new System.Windows.Forms.Label();
@@ -40,8 +42,8 @@
             this.cbZoom = new System.Windows.Forms.CheckBox();
             this.cbContrast = new System.Windows.Forms.CheckBox();
             this.label7 = new System.Windows.Forms.Label();
-            this.nThreashold = new System.Windows.Forms.NumericUpDown();
-            this.cbThreashold = new System.Windows.Forms.CheckBox();
+            this.nThreshold = new System.Windows.Forms.NumericUpDown();
+            this.cbThreshold = new System.Windows.Forms.CheckBox();
             this.label6 = new System.Windows.Forms.Label();
             this.cbNoiseReduction = new System.Windows.Forms.CheckBox();
             this.label5 = new System.Windows.Forms.Label();
@@ -52,7 +54,6 @@
             this.nGridInterval = new System.Windows.Forms.NumericUpDown();
             this.cbDrawGrid1 = new System.Windows.Forms.CheckBox();
             this.cbMirror1 = new System.Windows.Forms.CheckBox();
-            this.cbRotate = new System.Windows.Forms.CheckBox();
             this.trackBarExposure = new System.Windows.Forms.TrackBar();
             this.trackBar1 = new System.Windows.Forms.TrackBar();
             this.XCam_comboBox = new System.Windows.Forms.ComboBox();
@@ -89,7 +90,7 @@
             this.label11 = new System.Windows.Forms.Label();
             this.nThresholdLinking = new System.Windows.Forms.NumericUpDown();
             this.label10 = new System.Windows.Forms.Label();
-            this.nLineThreashold = new System.Windows.Forms.NumericUpDown();
+            this.nLineThreshold = new System.Windows.Forms.NumericUpDown();
             this.label9 = new System.Windows.Forms.Label();
             this.nlineCanny = new System.Windows.Forms.NumericUpDown();
             this.cbShapeAndLineDetection = new System.Windows.Forms.CheckBox();
@@ -109,7 +110,7 @@
             this.label23 = new System.Windows.Forms.Label();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nZoom)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.nThreashold)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nThreshold)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nGridInterval)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.trackBarExposure)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.trackBar1)).BeginInit();
@@ -123,7 +124,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.nMinRadius)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nMinLineWidth)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nThresholdLinking)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.nLineThreashold)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nLineThreshold)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nlineCanny)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nEyeTrackingTuningX)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nEyeTrackingTuningY)).BeginInit();
@@ -139,7 +140,9 @@
             this.panel1.Controls.Add(this.lblSaveFileLocation);
             this.panel1.Controls.Add(this.bSetSaveLocation);
             this.panel1.Controls.Add(this.lblRotate);
+            this.panel1.Controls.Add(this.lblResolution);
             this.panel1.Controls.Add(this.cbRotationAmount);
+            this.panel1.Controls.Add(this.cbResolution);
             this.panel1.Controls.Add(this.cbNoiseReduce);
             this.panel1.Controls.Add(this.cbEdgeDetection);
             this.panel1.Controls.Add(this.label8);
@@ -147,8 +150,8 @@
             this.panel1.Controls.Add(this.cbZoom);
             this.panel1.Controls.Add(this.cbContrast);
             this.panel1.Controls.Add(this.label7);
-            this.panel1.Controls.Add(this.nThreashold);
-            this.panel1.Controls.Add(this.cbThreashold);
+            this.panel1.Controls.Add(this.nThreshold);
+            this.panel1.Controls.Add(this.cbThreshold);
             this.panel1.Controls.Add(this.label6);
             this.panel1.Controls.Add(this.cbNoiseReduction);
             this.panel1.Controls.Add(this.label5);
@@ -159,7 +162,6 @@
             this.panel1.Controls.Add(this.nGridInterval);
             this.panel1.Controls.Add(this.cbDrawGrid1);
             this.panel1.Controls.Add(this.cbMirror1);
-            this.panel1.Controls.Add(this.cbRotate);
             this.panel1.Controls.Add(this.trackBarExposure);
             this.panel1.Controls.Add(this.trackBar1);
             this.panel1.Location = new System.Drawing.Point(0, 94);
@@ -239,6 +241,15 @@
             this.bSetSaveLocation.UseVisualStyleBackColor = true;
             this.bSetSaveLocation.Click += new System.EventHandler(this.bSetSaveLocation_Click);
             // 
+            // lblResolution
+            // 
+            this.lblResolution.AutoSize = true;
+            this.lblResolution.Location = new System.Drawing.Point(3, 3);
+            this.lblResolution.Name = "lblResolution";
+            this.lblResolution.Size = new System.Drawing.Size(86, 13);
+            this.lblResolution.TabIndex = 45;
+            this.lblResolution.Text = "Resolution";
+            // 
             // lblRotate
             // 
             this.lblRotate.AutoSize = true;
@@ -250,19 +261,37 @@
             // 
             // cbRotationAmount
             // 
+            this.cbRotationAmount.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cbRotationAmount.FormattingEnabled = true;
             this.cbRotationAmount.Items.AddRange(new object[] {
-            "90 degrees",
-            "180 degrees",
-            "270 degrees"});
+                "0 degrees",
+                "90 degrees",
+                "180 degrees",
+                "270 degrees"});
             this.cbRotationAmount.Location = new System.Drawing.Point(133, 18);
             this.cbRotationAmount.Name = "cbRotationAmount";
             this.cbRotationAmount.Size = new System.Drawing.Size(97, 21);
             this.cbRotationAmount.TabIndex = 45;
             this.cbRotationAmount.SelectedIndexChanged += new System.EventHandler(this.cbRotationAmount_SelectedIndexChanged);
+            //this.cbRotationAmount.
+            // 
+            // cbRotationAmount
+            // 
+            this.cbResolution.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cbResolution.FormattingEnabled = true;
+            this.cbResolution.Items.AddRange(new object[] {
+                "0",
+                "1",
+                "2"});
+            this.cbResolution.Location = new System.Drawing.Point(133, 0);
+            this.cbResolution.Name = "cbResolution";
+            this.cbResolution.Size = new System.Drawing.Size(97, 21);
+            this.cbResolution.TabIndex = 45;
+            this.cbResolution.SelectedIndexChanged += new System.EventHandler(this.cbResolution_SelectedIndexChanged);
             // 
             // cbNoiseReduce
             // 
+            this.cbNoiseReduce.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cbNoiseReduce.FormattingEnabled = true;
             this.cbNoiseReduce.Items.AddRange(new object[] {
             "Bilarteral Smth",
@@ -276,6 +305,7 @@
             // 
             // cbEdgeDetection
             // 
+            this.cbEdgeDetection.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cbEdgeDetection.FormattingEnabled = true;
             this.cbEdgeDetection.Items.AddRange(new object[] {
             "Sobel",
@@ -344,41 +374,41 @@
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(90, 13);
             this.label7.TabIndex = 36;
-            this.label7.Text = "Threashold Value";
+            this.label7.Text = "Threshold Value";
             // 
-            // nThreashold
+            // nThreshold
             // 
-            this.nThreashold.Location = new System.Drawing.Point(170, 273);
-            this.nThreashold.Maximum = new decimal(new int[] {
+            this.nThreshold.Location = new System.Drawing.Point(170, 273);
+            this.nThreshold.Maximum = new decimal(new int[] {
             254,
             0,
             0,
             0});
-            this.nThreashold.Minimum = new decimal(new int[] {
+            this.nThreshold.Minimum = new decimal(new int[] {
             1,
             0,
             0,
             0});
-            this.nThreashold.Name = "nThreashold";
-            this.nThreashold.Size = new System.Drawing.Size(60, 20);
-            this.nThreashold.TabIndex = 35;
-            this.nThreashold.Value = new decimal(new int[] {
+            this.nThreshold.Name = "nThreshold";
+            this.nThreshold.Size = new System.Drawing.Size(60, 20);
+            this.nThreshold.TabIndex = 35;
+            this.nThreshold.Value = new decimal(new int[] {
             1,
             0,
             0,
             0});
-            this.nThreashold.ValueChanged += new System.EventHandler(this.nThreashold_ValueChanged);
+            this.nThreshold.ValueChanged += new System.EventHandler(this.nThreshold_ValueChanged);
             // 
-            // cbThreashold
+            // cbThreshold
             // 
-            this.cbThreashold.AutoSize = true;
-            this.cbThreashold.Location = new System.Drawing.Point(3, 255);
-            this.cbThreashold.Name = "cbThreashold";
-            this.cbThreashold.Size = new System.Drawing.Size(79, 17);
-            this.cbThreashold.TabIndex = 34;
-            this.cbThreashold.Text = "Threashold";
-            this.cbThreashold.UseVisualStyleBackColor = true;
-            this.cbThreashold.CheckedChanged += new System.EventHandler(this.cbThreashold_CheckedChanged);
+            this.cbThreshold.AutoSize = true;
+            this.cbThreshold.Location = new System.Drawing.Point(3, 255);
+            this.cbThreshold.Name = "cbThreshold";
+            this.cbThreshold.Size = new System.Drawing.Size(79, 17);
+            this.cbThreshold.TabIndex = 34;
+            this.cbThreshold.Text = "Threshold";
+            this.cbThreshold.UseVisualStyleBackColor = true;
+            this.cbThreshold.CheckedChanged += new System.EventHandler(this.cbThreshold_CheckedChanged);
             // 
             // label6
             // 
@@ -495,17 +525,6 @@
             this.cbMirror1.Text = "Mirror";
             this.cbMirror1.UseVisualStyleBackColor = true;
             this.cbMirror1.CheckedChanged += new System.EventHandler(this.cbMirror1_CheckedChanged);
-            // 
-            // cbRotate
-            // 
-            this.cbRotate.AutoSize = true;
-            this.cbRotate.Location = new System.Drawing.Point(3, 3);
-            this.cbRotate.Name = "cbRotate";
-            this.cbRotate.Size = new System.Drawing.Size(71, 17);
-            this.cbRotate.TabIndex = 15;
-            this.cbRotate.Text = "rotate180";
-            this.cbRotate.UseVisualStyleBackColor = true;
-            this.cbRotate.CheckedChanged += new System.EventHandler(this.cbRotate_CheckedChanged);
             // 
             // trackBarExposure
             // 
@@ -624,7 +643,7 @@
             this.panel2.Controls.Add(this.label11);
             this.panel2.Controls.Add(this.nThresholdLinking);
             this.panel2.Controls.Add(this.label10);
-            this.panel2.Controls.Add(this.nLineThreashold);
+            this.panel2.Controls.Add(this.nLineThreshold);
             this.panel2.Controls.Add(this.label9);
             this.panel2.Controls.Add(this.nlineCanny);
             this.panel2.Controls.Add(this.cbShapeAndLineDetection);
@@ -712,7 +731,7 @@
             this.label19.Name = "label19";
             this.label19.Size = new System.Drawing.Size(60, 13);
             this.label19.TabIndex = 28;
-            this.label19.Text = "Threashold";
+            this.label19.Text = "Threshold";
             // 
             // numericUpDown1
             // 
@@ -961,25 +980,25 @@
             this.label10.Name = "label10";
             this.label10.Size = new System.Drawing.Size(80, 13);
             this.label10.TabIndex = 9;
-            this.label10.Text = "LineThreashold";
+            this.label10.Text = "LineThreshold";
             // 
-            // nLineThreashold
+            // nLineThreshold
             // 
-            this.nLineThreashold.Location = new System.Drawing.Point(123, 70);
-            this.nLineThreashold.Minimum = new decimal(new int[] {
+            this.nLineThreshold.Location = new System.Drawing.Point(123, 70);
+            this.nLineThreshold.Minimum = new decimal(new int[] {
             1,
             0,
             0,
             0});
-            this.nLineThreashold.Name = "nLineThreashold";
-            this.nLineThreashold.Size = new System.Drawing.Size(120, 20);
-            this.nLineThreashold.TabIndex = 8;
-            this.nLineThreashold.Value = new decimal(new int[] {
+            this.nLineThreshold.Name = "nLineThreshold";
+            this.nLineThreshold.Size = new System.Drawing.Size(120, 20);
+            this.nLineThreshold.TabIndex = 8;
+            this.nLineThreshold.Value = new decimal(new int[] {
             20,
             0,
             0,
             0});
-            this.nLineThreashold.ValueChanged += new System.EventHandler(this.nLineThreashold_ValueChanged);
+            this.nLineThreshold.ValueChanged += new System.EventHandler(this.nLineThreshold_ValueChanged);
             // 
             // label9
             // 
@@ -1200,7 +1219,7 @@
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nZoom)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.nThreashold)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nThreshold)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nGridInterval)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.trackBarExposure)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.trackBar1)).EndInit();
@@ -1215,7 +1234,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.nMinRadius)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nMinLineWidth)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nThresholdLinking)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.nLineThreashold)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nLineThreshold)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nlineCanny)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nEyeTrackingTuningX)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nEyeTrackingTuningY)).EndInit();
@@ -1232,8 +1251,8 @@
         private System.Windows.Forms.CheckBox cbZoom;
         private System.Windows.Forms.CheckBox cbContrast;
         private System.Windows.Forms.Label label7;
-        private System.Windows.Forms.NumericUpDown nThreashold;
-        private System.Windows.Forms.CheckBox cbThreashold;
+        private System.Windows.Forms.NumericUpDown nThreshold;
+        private System.Windows.Forms.CheckBox cbThreshold;
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.CheckBox cbNoiseReduction;
         private System.Windows.Forms.Label label5;
@@ -1244,11 +1263,12 @@
         private System.Windows.Forms.NumericUpDown nGridInterval;
         private System.Windows.Forms.CheckBox cbDrawGrid1;
         private System.Windows.Forms.CheckBox cbMirror1;
-        private System.Windows.Forms.CheckBox cbRotate;
         private System.Windows.Forms.ComboBox cbEdgeDetection;
         private System.Windows.Forms.ComboBox cbNoiseReduce;
         public System.Windows.Forms.Label lblRotate;
+        public System.Windows.Forms.Label lblResolution;
         private System.Windows.Forms.ComboBox cbRotationAmount;
+        private System.Windows.Forms.ComboBox cbResolution;
         private System.Windows.Forms.Label lblSaveFileLocation;
         private System.Windows.Forms.Button bSetSaveLocation;
         private System.Windows.Forms.CheckBox cbLockExposure;
@@ -1271,7 +1291,7 @@
         private System.Windows.Forms.CheckBox cbLineDetection;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.Label label10;
-        private System.Windows.Forms.NumericUpDown nLineThreashold;
+        private System.Windows.Forms.NumericUpDown nLineThreshold;
         private System.Windows.Forms.Label label13;
         private System.Windows.Forms.NumericUpDown nCircleAccumulator;
         private System.Windows.Forms.Label label14;
